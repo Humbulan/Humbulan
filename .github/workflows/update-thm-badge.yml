@@ -1,0 +1,22 @@
+name: Update TryHackMe Badge
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Badge
+        uses: DhanushNehru/tryhackme-badge-action-workflow@main
+        with:
+          USER_ID: "getfriendhumbula"
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "assets/"
+          message: "chore: update tryhackme badge"
+          push: true
