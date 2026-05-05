@@ -1,23 +1,31 @@
-# Hi there, I'm Humbulan! 👋
+# ⚔️ Humbulani "getfriendhumbula" Mudau ⚔️
 
-Welcome to my GitHub profile! I'm a passionate developer exploring new technologies and contributing to open-source projects.
+**CEO & Director – Imperial Lead** | Thohoyandou, Limpopo, South Africa
 
-## 🚀 About Me
+[![ORCID iD](https://img.shields.io/badge/ORCID-0009--0000--9572--4545-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0009-0000-9572-4545)
 
-I'm currently working on various open-source projects and learning advanced web development and cloud computing.  I'm always eager to expand my skillset and collaborate with others.
+---
 
-Ask me about anything related to JavaScript, Python, or cloud services!
+## 🛡️ Executive Technical Dossier
 
-* **Pronouns:** He/Him
-* **Fun fact:** I enjoy hiking and playing the guitar in my free time.
+A high-level infrastructure architect and security practitioner managing the **Imperial Stack**, a 58-port automated enterprise architecture.
 
-## 🛠️ Skills
+### 🚀 Technical Benchmarks
 
-* **Programming Languages:** JavaScript, Python, Java, C++
-* **Web Development:** HTML, CSS, React, Node.js, Express.js
-* **Databases:** MySQL, MongoDB, PostgreSQL
-* **Cloud Services:** AWS, Azure, Google Cloud Platform
-* **DevOps:** Docker, Kubernetes, Jenkins
-* **Tools & Technologies:** Git, GitHub, VS Code, Linux
+#### 1. Software Engineering (CodeCrafters)
+[![CodeCrafters Global Rank](https://img.shields.io/badge/Global%20Rank-16-2ea44f?style=for-the-badge&logo=github&logoColor=white)](https://codecrafters.io)
 
-## 📈 GitHub Stats
+#### 2. Cybersecurity (TryHackMe)
+[![TryHackMe Gold League](https://img.shields.io/badge/Gold%20League%20Rank-1-brightgreen?style=for-the-badge&logo=tryhackme&logoColor=white)](https://tryhackme.com/p/getfriendhumbula)
+[![Top 3% Worldwide](https://img.shields.io/badge/Top%203%25%20Worldwide-3M%2B%20users-blue?style=for-the-badge)](https://tryhackme.com/p/getfriendhumbula)
+
+#### 3. Infrastructure
+[![58/58 Ports Online](https://img.shields.io/badge/Imperial%20Stack-58%2F58%20Ports%20Online-green?style=for-the-badge)](https://github.com/Humbulan)
+
+### 📊 Live Verified Status (auto-updates every 6 hours)
+![TryHackMe Badge](images/tryhackme-badge.svg)
+![CodeCrafters Badge](rank-badge.svg)
+
+---
+
+📧 **Contact:** getfriendhumbulani30@gmail.com
