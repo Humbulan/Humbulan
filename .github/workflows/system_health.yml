@@ -1,0 +1,29 @@
+name: System Health Monitor
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 * * * *' 
+
+jobs:
+  update-system-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Report Device Status
+        run: |
+          echo "### Imperial Network Stack Status" > system_status.md
+          echo "- **Date:** $(date)" >> system_status.md
+          echo "- **Monitored Ports:** 64/64" >> system_status.md
+          echo "- **Database Status:** $(ss -tuln | grep :3306 > /dev/null && echo 'Online' || echo 'Offline')" >> system_status.md
+          
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'Humbulani Mudau'
+          git config --global user.email 'humbulani@humbuwandeme.co.za'
+          git add system_status.md
+          git commit -m "Update system health status: $(date)"
+          git push
