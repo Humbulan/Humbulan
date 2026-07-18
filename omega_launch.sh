@@ -391,3 +391,4 @@ if [ $? -eq 0 ]; then
 else
     echo -e "${RED}❌ Cloudflare metrics ingestion failed.${NC}"
 fi
+

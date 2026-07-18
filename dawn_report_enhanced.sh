@@ -164,15 +164,4 @@ echo "Policy Master: https://docs.google.com/document/d/1fy_OT98e_si7dDNVvGwV8qs
 echo "Risk Register: https://docs.google.com/document/d/134KIt-rcW_tDpc6jCHcpqQYXOjWh0psHzb71aoFy4-c/edit"
 echo "-----------------------------------"
 
-# ===== BACKUP INTEGRITY CHECK =====
-LATEST_BACKUP=$(ls -t ~/imperial_vault/archives/*.tar.gz 2>/dev/null | head -n 1)
-if [ -f "$LATEST_BACKUP" ] && [ -f "$LATEST_BACKUP.sha256" ]; then
-    if sha256sum -c "$LATEST_BACKUP.sha256" > /dev/null 2>&1; then
-        echo "✅ Backup Integrity: VERIFIED ($(basename $LATEST_BACKUP))"
-    else
-        echo "❌ Backup Integrity: FAILED"
-        ~/imperial_network/scripts/send_alert.sh "🚨 BACKUP CORRUPTION DETECTED! Latest archive checksum mismatch."
-    fi
-else
-    echo "⚠️ Backup Integrity: No archive or checksum found."
-fi
+echo "🔐 Backup Integrity: $(cd ~/imperial_vault/archives && sha256sum -c *.sha256 2>/dev/null && echo OK || echo FAILED)"
