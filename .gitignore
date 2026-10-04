@@ -108,3 +108,15 @@ package-lock.json
 package.json
 prometheus/alertmanager.yml
 imperial_nexus.sql
+COMMAND_HISTORY.txt
+fleet_dashboard.json
+fleet_maintenance_dashboard.json
+grafana_dashboard_cloudflare.json
+grafana_dashboard_response_time.json
+new_audit.json
+sadc_trade_manifest_20260223.json
+temperature_monitor_flow.json
+lang/translations/
+fastapi-mobile-app/app/static/manifest.json
+fastapi-mobile-app/public/manifest.json
+~
