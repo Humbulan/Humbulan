@@ -138,8 +138,8 @@ echo "⚠️  NOTICE: System performing at $CAPACITY% capacity."
 
 # ===== FINANCIAL TOTALS =====
 <<<<<<< HEAD
-SADC_TOTAL=$(mariadb -u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT SUM(amount) FROM payment WHERE payment_method LIKE 'SADC%'" -N -s 2>/dev/null || echo 0)
-WEB_TOTAL=$(mariadb -u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT SUM(amount) FROM payment WHERE payment_method='IMPERIAL_WEB_UPGRADE'" -N -s 2>/dev/null || echo 0)
+SADC_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT SUM(amount) FROM payment WHERE payment_method LIKE 'SADC%'" -N -s 2>/dev/null || echo 0)
+WEB_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT SUM(amount) FROM payment WHERE payment_method='IMPERIAL_WEB_UPGRADE'" -N -s 2>/dev/null || echo 0)
 TRUE_VAL=$(echo "$SADC_TOTAL + $WEB_TOTAL" | bc 2>/dev/null || echo 0)
 =======
 SADC_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method LIKE 'SADC%' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
@@ -238,7 +238,7 @@ fi
 
 # ===== VULNERABILITY NOTIFICATION HOOK =====
 <<<<<<< HEAD
-UNNOTIFIED=$(mariadb -u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT COUNT(*) FROM vulnerability_logs WHERE notified = 0;" -N -s 2>/dev/null)
+UNNOTIFIED=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT COUNT(*) FROM vulnerability_logs WHERE notified = 0;" -N -s 2>/dev/null)
 =======
 UNNOTIFIED=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT COUNT(*) FROM vulnerability_logs WHERE notified = 0;" -N -s 2>/dev/null)
 >>>>>>> ef46e832 (Security: Move hardcoded MariaDB password to environment variable)
@@ -247,7 +247,7 @@ if [ -n "$UNNOTIFIED" ] && [ "$UNNOTIFIED" -gt 0 ]; then
     ~/imperial_network/scripts/send_alert.sh "🚨 New Vulnerabilities Logged: $UNNOTIFIED"
     # Mark them as notified
 <<<<<<< HEAD
-    mariadb -u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE vulnerability_logs SET notified = 1 WHERE notified = 0;" 2>/dev/null
+    mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE vulnerability_logs SET notified = 1 WHERE notified = 0;" 2>/dev/null
 =======
     mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE vulnerability_logs SET notified = 1 WHERE notified = 0;" 2>/dev/null
 >>>>>>> ef46e832 (Security: Move hardcoded MariaDB password to environment variable)
