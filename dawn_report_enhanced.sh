@@ -114,6 +114,8 @@ echo "⚠️  NOTICE: System performing at $CAPACITY% capacity."
 SADC_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method LIKE 'SADC%' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
 WEB_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method='IMPERIAL_WEB_UPGRADE' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
 TRUE_VAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE is_demo = 0" -N -s 2>/dev/null || echo 0)
+PORTFOLIO_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment" -N -s 2>/dev/null || echo 0)
+TRADE_VOLUME=$(curl -s --max-time 3 -G "http://localhost:9091/api/v1/query" --data-urlencode 'query=sadc_trade_volume' | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null || echo 0)
 
 echo ""
 echo "🏛️  IMPERIAL SUMMARY"
@@ -121,14 +123,14 @@ echo "-------------------------------------------------------"
 echo "💰 REAL REVENUE: R$TRUE_VAL"
 echo "📈 PROGRESS TO R500B: $(echo "scale=4; ($TRUE_VAL / 500000000000) * 100" | bc)%"
 echo "🌍 SADC CORRIDOR:   🟢 ACTIVE (Zim/Moz)"
-echo "   • TRADE VOLUME:    N/A (not tracked)"
-echo "🔒 WEALTH LOCK:     — (no ledger table)"
+echo "   • TRADE VOLUME:    R${TRADE_VOLUME}"
+echo "🔒 PORTFOLIO VALUE: R${PORTFOLIO_TOTAL}"
 echo "💎 REAL REVENUE:   R$TRUE_VAL"
 echo ""
 echo "-------------------------------------------------------"
 echo "💰 WEALTH LOCK UPDATE"
 echo "   • Base Valuation: R$TRUE_VAL"
-echo "   • Market Gain: N/A"
+echo "   • Portfolio Total: R${PORTFOLIO_TOTAL}"
 echo "-------------------------------------------------------"
 # Live commodity data from Prometheus
 PROM="http://localhost:9091/api/v1/query"
