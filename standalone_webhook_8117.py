@@ -25,13 +25,15 @@ def refresh_cloudflare_metrics():
     try:
         pwd = os.environ.get("MYSQL_ROOT_PASSWORD", "")
         sock = os.path.expanduser("~/mysql_run/mysql.sock")
-        cmd = [
-            "mariadb", "-u", "root", "-p" + pwd,
-            "-S", sock, "imperial_nexus", "-N", "-s", "-e",
+        cmd = ["mariadb", "-u", "root", "-S", sock]
+        if pwd:
+            cmd.append("-p" + pwd)
+        cmd.extend([
+            "imperial_nexus", "-N", "-s", "-e",
             "SELECT metric, value, labels FROM cloudflare_metrics "
             "WHERE timestamp > DATE_SUB(NOW(), INTERVAL 24 HOUR) "
             "ORDER BY timestamp DESC",
-        ]
+        ])
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
         if res.returncode != 0:
             cf_cache["data"] = "# ERROR reading DB: %s\n" % res.stderr.strip()
