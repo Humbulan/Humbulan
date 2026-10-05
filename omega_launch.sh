@@ -34,10 +34,10 @@ if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/8120") 2>/dev/null; then
     sleep 2
 fi
 check_port 8120
-export ADMIN_KEY="${ADMIN_KEY:-AdminSecret123}"
-export WEBHOOK_SECRET="${WEBHOOK_SECRET:-E5rbHUSBx63397yO7lV1yApPfZKCyIV}"
+export ADMIN_KEY="${ADMIN_KEY:-}"
+export WEBHOOK_SECRET="${WEBHOOK_SECRET:-}"
 export PORTAL_USERNAME="${PORTAL_USERNAME:-admin}"
-export PORTAL_PASSWORD="${PORTAL_PASSWORD:-securepass}"
+export PORTAL_PASSWORD="${PORTAL_PASSWORD:-}"
 export DB_PASSWORD="${DB_PASSWORD:-$MYSQL_ROOT_PASSWORD}"
 export DB_USER="${DB_USER:-root}"
 export MYSQL_SOCKET="${MYSQL_SOCKET:-/data/data/com.termux/files/home/mysql_run/mysql.sock}"
