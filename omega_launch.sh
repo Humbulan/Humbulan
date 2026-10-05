@@ -9,13 +9,13 @@ echo $$ > "$LOCKFILE"
 trap "rm -f $LOCKFILE" EXIT
 
 # IMPERIAL OMEGA LAUNCH - CEO ONLY
-# Version: 8.0 | 62/61 Ports with MariaDB Active
+# Version: 8.0 | 76 Ports with MariaDB Active
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 BLUE='\033[0;34m'; PURPLE='\033[0;35m'; CYAN='\033[0;36m'; NC='\033[0m'
 
 echo -e "${PURPLE}=============================================${NC}"
-echo -e "${PURPLE}🏛️ IMPERIAL OMEGA LAUNCH - 70 PORTS${NC}"
+echo -e "${PURPLE}🏛️ IMPERIAL OMEGA LAUNCH - 76 PORTS${NC}"
 echo -e "${PURPLE}=============================================${NC}"
 echo -e "${CYAN}CEO: Humbulani Mudau | Date: $(date)${NC}"
 
@@ -167,7 +167,7 @@ if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/5173") 2>/dev/null; then
 fi
 check_port 5173
 
-echo -e "\n${YELLOW}🔍 Verifying 70 ports...${NC}"
+echo -e "\n${YELLOW}🔍 Verifying 76 ports...${NC}"
 ONLINE=0
 for port in 1880 1883 8000 8001 8080 8081 8082 8083 8085 8086 8087 8088 8090 8091 8092 8093 8094 8095 8096 8097 8098 8099 8100 8101 8102 8103 8104 8105 8106 8107 8108 8110 8111 8112 8113 8114 8115 8117 8118 8121 8122 8191 8880 8888 8889 8890 8119 9001 9002 9003 9090 11434 12345 18789 8002 8005 5001 5002 5003 5006 5007 5008 8885 65412 3306 9091 9102 8089 8084 3001; do
     if (timeout 0.2 bash -c "echo > /dev/tcp/localhost/$port") 2>/dev/null; then
@@ -175,7 +175,7 @@ for port in 1880 1883 8000 8001 8080 8081 8082 8083 8085 8086 8087 8088 8090 809
     fi
 done
 echo -e "\n${PURPLE}=============================================${NC}"
-echo -e "${GREEN}✅ $ONLINE / 70 ports online${NC}"
+echo -e "${GREEN}✅ $ONLINE / 76 ports online${NC}"
  
 # Apply CPU priority to high-value nodes
 ~/imperial_network/imperial_optimize.sh priority
