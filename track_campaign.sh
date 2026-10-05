@@ -7,7 +7,7 @@ sqlite3() {
 
     local query="$2"
 
-    mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$HOME/mysql_run/mysql.sock" -e "USE imperial_nexus; $query" | tail -1
+    mariadb -S "$HOME/mysql_run/mysql.sock" -e "USE imperial_nexus; $query" | tail -1
 
 }
 

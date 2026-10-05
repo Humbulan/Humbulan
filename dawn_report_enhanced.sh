@@ -6,7 +6,7 @@
 
 # ===== HELPERS =====
 get_sadc_volume() {
-    mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT IFNULL(SUM(amount), 0) FROM payment WHERE payment_method LIKE 'SADC%' AND status='completed';" -N -s 2>/dev/null || echo 0
+    mariadb -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT IFNULL(SUM(amount), 0) FROM payment WHERE payment_method LIKE 'SADC%' AND status='completed';" -N -s 2>/dev/null || echo 0
 }
 
 get_name() {
@@ -111,10 +111,10 @@ echo "📊 STATUS: $ONLINE_COUNT/$TOTAL_PORTS ports verified"
 echo "⚠️  NOTICE: System performing at $CAPACITY% capacity."
 
 # ===== FINANCIAL TOTALS =====
-SADC_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method LIKE 'SADC%' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
-WEB_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method='IMPERIAL_WEB_UPGRADE' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
-TRUE_VAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE is_demo = 0" -N -s 2>/dev/null || echo 0)
-PORTFOLIO_TOTAL=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment" -N -s 2>/dev/null || echo 0)
+SADC_TOTAL=$(mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method LIKE 'SADC%' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
+WEB_TOTAL=$(mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE payment_method='IMPERIAL_WEB_UPGRADE' AND is_demo = 0" -N -s 2>/dev/null || echo 0)
+TRUE_VAL=$(mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment WHERE is_demo = 0" -N -s 2>/dev/null || echo 0)
+PORTFOLIO_TOTAL=$(mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT IFNULL(SUM(amount),0) FROM payment" -N -s 2>/dev/null || echo 0)
 TRADE_VOLUME=$(curl -s --max-time 3 -G "http://localhost:9091/api/v1/query" --data-urlencode 'query=sadc_trade_volume' | jq -r '.data.result[0].value[1] // "0"' 2>/dev/null || echo 0)
 
 echo ""
@@ -175,12 +175,12 @@ if [ "$ONLINE_COUNT" -lt $((TOTAL_PORTS - 5)) ]; then
 fi
 
 # ===== VULNERABILITY NOTIFICATION HOOK =====
-UNNOTIFIED=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT COUNT(*) FROM vulnerability_logs WHERE notified = 0;" -N -s 2>/dev/null)
+UNNOTIFIED=$(mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; SELECT COUNT(*) FROM vulnerability_logs WHERE notified = 0;" -N -s 2>/dev/null)
 if [ -n "$UNNOTIFIED" ] && [ "$UNNOTIFIED" -gt 0 ]; then
     echo "⚠️  NOTICE: $UNNOTIFIED new vulnerabilities require attention."
     ~/imperial_network/scripts/send_alert.sh "🚨 New Vulnerabilities Logged: $UNNOTIFIED"
     # Mark them as notified
-    mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE vulnerability_logs SET notified = 1 WHERE notified = 0;" 2>/dev/null
+    mariadb -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE vulnerability_logs SET notified = 1 WHERE notified = 0;" 2>/dev/null
 fi
 
 # ===== IMPERIAL NETWORK POLICY HUB =====
@@ -191,7 +191,7 @@ echo "-----------------------------------"
 
 # ===== ADDITIONAL ALERT CHECKS =====
 # Fleet maintenance check – if more than 3 vehicles in maintenance
-FLEET_MAINT=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT COUNT(*) FROM fleet WHERE status='Maintenance';" -N -s 2>/dev/null || echo 0)
+FLEET_MAINT=$(mariadb -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT COUNT(*) FROM fleet WHERE status='Maintenance';" -N -s 2>/dev/null || echo 0)
 if [ "$FLEET_MAINT" -gt 3 ]; then
     ~/imperial_network/scripts/send_alert.sh "🚨 Fleet alert: $FLEET_MAINT vehicles are in maintenance."
 fi

@@ -361,7 +361,7 @@ fi
 # ==========================================
 
 # Check Cloudflare Free Tier status
-CF_ALERT=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT value FROM settings WHERE \`key\` = 'cloudflare_free_tier_alert';" -N -s)
+CF_ALERT=$(mariadb -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT value FROM settings WHERE \`key\` = 'cloudflare_free_tier_alert';" -N -s)
 
 if [ "$CF_ALERT" == "ENABLED" ]; then
     echo -e "${YELLOW}[ALERT] Cloudflare Free Tier detected. Analytics access restricted.${NC}"
@@ -377,7 +377,7 @@ echo -e "\n${YELLOW}🌐 Synchronizing Cloudflare Metrics to Imperial Nexus...${
 # CURRENT_REQ=${1:-0}
 # 
 # # Insert into MariaDB using the established socket path
-# mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" imperial_nexus <<SQL
+# mariadb -S "$MYSQL_SOCKET" imperial_nexus <<SQL
 # INSERT INTO cloudflare_metrics (metric, value, labels, timestamp)
 # VALUES (
 #     'cloudflare_zone_requests_total', 

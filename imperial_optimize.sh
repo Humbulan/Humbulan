@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # Imperial Network Optimizer – High‑Value Node Prioritisation & Telemetry
 
-DB_OPTS="-u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock"
+DB_OPTS="-S $HOME/mysql_run/mysql.sock"
 HIGH_VALUE_PORTS="8106 8107 8108"
 LOG_FILE="$HOME/imperial_network/logs/optimizer.log"
 
