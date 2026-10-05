@@ -196,10 +196,10 @@ if ! check_port 8115; then
     nohup python3 ghost_8115.py > logs/ghost.log 2>&1 &
 fi
 
-# 19. Voucher API (8098)
+# 19. Agent Chat UI (8098) — replaces Voucher API
 if ! check_port 8098; then
-    echo " 🎫 Starting Voucher API (8098)..."
-    nohup python3 voucher_api.py > logs/voucher_api.log 2>&1 &
+    echo " 🎫 Starting Imperial Agent Chat (8098)..."
+    nohup /data/data/com.termux/files/home/Build-your-own-Claude-Code/.venv/bin/python3 agent_chat.py > logs/agent_chat.log 2>&1 &
 fi
 
 # 20. Contact handler (8109)

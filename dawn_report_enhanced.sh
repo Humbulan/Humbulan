@@ -26,7 +26,7 @@ get_name() {
         8092) echo "Dashboard_UI" ;; 8093) echo "System_Stats" ;;
         8094) echo "Intel_Redirect" ;; 8095) echo "File_Browser" ;;
         8096) echo "Sovereign_Master" ;; 8097) echo "Imperial_Front" ;;
-        8098) echo "Voucher_API" ;; 8099) echo "B2B_Hub" ;;
+        8098) echo "Agent_Chat_UI" ;; 8099) echo "B2B_Hub" ;;
         8100) echo "Malamulele_Portal" ;; 8101) echo "BI_Hub" ;;
         8102) echo "Urban_Gateway" ;; 8103) echo "Intel_Alpha" ;;
         8104) echo "Surge_Monitor" ;; 8105) echo "Sentinel" ;;
