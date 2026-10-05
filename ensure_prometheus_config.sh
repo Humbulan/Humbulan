@@ -2,7 +2,7 @@
 # Ensure Prometheus config exists and rules are valid.
 PROM_DIR="$HOME/imperial_network/prometheus"
 RULES_FILE="$PROM_DIR/imperial.rules.yml"
-CONFIG_FILE="$PROM_DIR/prometheus.yml"
+CONFIG_FILE="$HOME/imperial_network/prometheus.yml"
 
 if [[ ! -f "$RULES_FILE" ]]; then
   echo "ERROR: $RULES_FILE missing"
