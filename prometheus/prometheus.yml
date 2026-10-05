@@ -27,3 +27,10 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:8117"]
     metrics_path: "/metrics"
+
+  - job_name: 'cloudflare_edge_exporter'
+    static_configs:
+      - targets: ['cloudflare-prometheus-exporter.getfriendhumbulani30.workers.dev']
+    metrics_path: '/metrics'
+    scheme: 'https'
+    scrape_interval: 300s
