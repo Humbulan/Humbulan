@@ -913,7 +913,7 @@ async def admin_metrics(admin_key: str = Header(None, alias="X-Admin-Key")):
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "E5rbHUSBx63397yO7lV1yApPfZKCyIV")
 KEY_FILE = os.path.expanduser("~/imperial_network/api_keys.db")
-ADMIN_KEY = os.getenv("ADMIN_KEY", "AdminSecret123")
+ADMIN_KEY = os.getenv("ADMIN_KEY", "")  # no fallback — must be set in .env
 RATE_LIMIT = 10
 RATE_WINDOW = 60
 PORTAL_USERNAME = os.getenv("PORTAL_USERNAME", "admin")
