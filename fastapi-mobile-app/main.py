@@ -48,7 +48,20 @@ async def admin_usage(admin_key: str = Header(None, alias="X-Admin-Key"), paymen
     if admin_key != os.getenv("ADMIN_KEY"):
         raise HTTPException(status_code=403, detail="Unauthorized")
     
-    insert_sql = f"INSERT INTO usage_logs (api_key, payment_id, fields) VALUES (\"{admin_key}\", \"{payment_id}\", \"{fields}\")"
+    # Never store raw keys — store a short fingerprint
+    key_fingerprint = hashlib.sha256(admin_key.encode()).hexdigest()[:12] if admin_key else "none"
+
+    # Sanitize free-text (mysql_query runs `mariadb -e`, no bound params)
+    def _clean(s):
+        return "".join(ch for ch in str(s) if ch.isalnum() or ch in "_-.")[:64]
+
+    safe_payment_id = _clean(payment_id)
+    safe_fields = _clean(fields)
+
+    insert_sql = (
+        "INSERT INTO usage_logs (api_key, payment_id, fields) VALUES "
+        f"(\"{key_fingerprint}\", \"{safe_payment_id}\", \"{safe_fields}\")"
+    )
     try:
         mysql_query(insert_sql)
     except Exception as e:
@@ -76,6 +89,7 @@ async def root():
 # === Auth helpers for portal ===
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import os as _os
+import hashlib
 def _mysql_password():
     pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
     if pwd:
