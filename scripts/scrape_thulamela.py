@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 """
 Thulamela Local Municipality tender scraper.
 Only inserts tenders that are still open (closing_date >= today).
@@ -13,7 +14,7 @@ from urllib.parse import urljoin
 
 DB_CONFIG = {
     'user': 'root',
-    'password': 'RootStrongPass123!',
+    'password': os.environ.get("MYSQL_ROOT_PASSWORD", ""),
     'unix_socket': '/data/data/com.termux/files/home/mysql_run/mysql.sock',
     'database': 'imperial_nexus',
 }

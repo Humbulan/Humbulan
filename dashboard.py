@@ -21,7 +21,7 @@ def verify_password(username, password):
 # DB config
 DB_CONFIG = {
     'user': 'root',
-    'password': 'RootStrongPass123!',
+    'password': os.environ.get("MYSQL_ROOT_PASSWORD", ""),
     'unix_socket': '/data/data/com.termux/files/home/mysql_run/mysql.sock',
     'database': 'imperial_nexus'
 }

@@ -38,7 +38,7 @@ export ADMIN_KEY="${ADMIN_KEY:-AdminSecret123}"
 export WEBHOOK_SECRET="${WEBHOOK_SECRET:-E5rbHUSBx63397yO7lV1yApPfZKCyIV}"
 export PORTAL_USERNAME="${PORTAL_USERNAME:-admin}"
 export PORTAL_PASSWORD="${PORTAL_PASSWORD:-securepass}"
-export DB_PASSWORD="${DB_PASSWORD:-RootStrongPass123!}"
+export DB_PASSWORD="${DB_PASSWORD:-$MYSQL_ROOT_PASSWORD}"
 export DB_USER="${DB_USER:-root}"
 export MYSQL_SOCKET="${MYSQL_SOCKET:-/data/data/com.termux/files/home/mysql_run/mysql.sock}"
 
@@ -361,7 +361,7 @@ fi
 # ==========================================
 
 # Check Cloudflare Free Tier status
-CF_ALERT=$(mariadb -u root -pRootStrongPass123! -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT value FROM settings WHERE \`key\` = 'cloudflare_free_tier_alert';" -N -s)
+CF_ALERT=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" -e "USE imperial_nexus; SELECT value FROM settings WHERE \`key\` = 'cloudflare_free_tier_alert';" -N -s)
 
 if [ "$CF_ALERT" == "ENABLED" ]; then
     echo -e "${YELLOW}[ALERT] Cloudflare Free Tier detected. Analytics access restricted.${NC}"
@@ -376,7 +376,7 @@ set -- $(curl -s http://localhost:8117/metrics | grep "cloudflare_zone_requests_
 CURRENT_REQ=${1:-0}
 
 # Insert into MariaDB using the established socket path
-mariadb -u root -pRootStrongPass123! -S "$MYSQL_SOCKET" imperial_nexus <<SQL
+mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" imperial_nexus <<SQL
 INSERT INTO cloudflare_metrics (metric, value, labels, timestamp)
 VALUES (
     'cloudflare_zone_requests_total', 

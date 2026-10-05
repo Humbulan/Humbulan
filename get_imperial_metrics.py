@@ -1,7 +1,8 @@
+import os
 import sys, json, subprocess, datetime
 
 def run_mysql(query):
-    cmd = ['mariadb', '-u', 'root', '-pRootStrongPass123!', '-S', '/data/data/com.termux/files/home/mysql_run/mysql.sock', '-e', query]
+    cmd = ['mariadb', '-u', 'root', '-p' + os.environ.get("MYSQL_ROOT_PASSWORD", ""), '-S', '/data/data/com.termux/files/home/mysql_run/mysql.sock', '-e', query]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0: return None
     lines = result.stdout.strip().split('\n')

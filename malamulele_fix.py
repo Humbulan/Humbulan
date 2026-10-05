@@ -11,7 +11,7 @@ os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 DB_CMD = [
     "mariadb",
     "-u", "root",
-    "-pRootStrongPass123!",
+    "-p" + os.environ.get("MYSQL_ROOT_PASSWORD", ""),
     "-S", "/data/data/com.termux/files/home/mysql_run/mysql.sock",
     "-D", "imperial_nexus",
     "-N",

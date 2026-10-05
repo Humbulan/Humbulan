@@ -5,7 +5,7 @@ source ~/imperial_network/.env
 SOCK="$HOME/mysql_run/mysql.sock"
 DB="imperial_nexus"
 
-ROWS=$(mariadb -u root -pRootStrongPass123! -S "$SOCK" -N -s -e "
+ROWS=$(mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$SOCK" -N -s -e "
   USE $DB;
   SELECT CONCAT('• ', tender_number, ' — ', LEFT(title,70), '  (closes ', closing_date, ')')
   FROM tender_monitor

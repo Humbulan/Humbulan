@@ -291,7 +291,7 @@ if command -v socat >/dev/null 2>&1; then
     echo "✅ Imperial Architect Bridge Active [18800 -> 8118]"
 fi
     echo "Updating system sectors in database..."
-mariadb -u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE system_sectors SET status='online', last_seen=NOW() WHERE port IN (1880,1883,8000,8001,8080,8081,8082,8083,8085,8086,8087,8088,8090,8091,8092,8093,3306,8121,8890,8094,8095,8096,8097,8098,8099,8100,8101,8102,8103,8104,8105,8106,8107,8108,8110,8111,8112,8113,8114,8115,8117,8191,8880,8888,8889,8119,9001,9002,9003,9090,11434,5000,5001);"
+mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock -e "USE imperial_nexus; UPDATE system_sectors SET status='online', last_seen=NOW() WHERE port IN (1880,1883,8000,8001,8080,8081,8082,8083,8085,8086,8087,8088,8090,8091,8092,8093,3306,8121,8890,8094,8095,8096,8097,8098,8099,8100,8101,8102,8103,8104,8105,8106,8107,8108,8110,8111,8112,8113,8114,8115,8117,8191,8880,8888,8889,8119,9001,9002,9003,9090,11434,5000,5001);"
     ONLINE=$(sqlite3 instance/imperial.db "SELECT COUNT(*) FROM system_sectors WHERE status='online';" 2>/dev/null || echo "0")
     TOTAL=$(sqlite3 instance/imperial.db "SELECT COUNT(*) FROM system_sectors;" 2>/dev/null || echo "0")
     echo "====================================="

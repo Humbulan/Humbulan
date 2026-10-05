@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 import mysql.connector
 import threading
@@ -10,7 +11,7 @@ DATA = {"status": "Sovereign Shield Active", "valuation": "R269.9B", "integrity"
 
 def get_cf_status():
     try:
-        conn = mysql.connector.connect(user='root', password='RootStrongPass123!', unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock', database='imperial_nexus')
+        conn = mysql.connector.connect(user='root', password=os.environ.get("MYSQL_ROOT_PASSWORD", ""), unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock', database='imperial_nexus')
         cursor = conn.cursor()
         cursor.execute("SELECT value FROM cloudflare_metrics ORDER BY timestamp DESC LIMIT 1")
         val = cursor.fetchone()

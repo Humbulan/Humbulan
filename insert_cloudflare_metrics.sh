@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 PROM_URL="http://localhost:9091/api/v1/query"
-DB_OPTS="-u root -pRootStrongPass123! -S $HOME/mysql_run/mysql.sock imperial_nexus"
+DB_OPTS="-u root -p"${MYSQL_ROOT_PASSWORD}" -S $HOME/mysql_run/mysql.sock imperial_nexus"
 
 # List of metrics to fetch (some have labels)
 METRICS=(

@@ -7,7 +7,7 @@ def get_db_connection():
 
         user="root",
 
-        password="RootStrongPass123!",
+        password=os.environ.get("MYSQL_ROOT_PASSWORD", ""),
 
         unix_socket="/data/data/com.termux/files/home/mysql_run/mysql.sock",
 
@@ -29,7 +29,7 @@ def mysql_query(sql):
     cmd = [
         "mariadb",
         "-u", "root",
-        "-pRootStrongPass123!",
+        "-p" + os.environ.get("MYSQL_ROOT_PASSWORD", ""),
         "-S", "/data/data/com.termux/files/home/mysql_run/mysql.sock",
         "imperial_nexus",
         "-e", sql

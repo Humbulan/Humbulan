@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+import os
 import mysql.connector
 from datetime import datetime, timedelta
 
 def summarize():
     conn = mysql.connector.connect(
         user='root',
-        password='RootStrongPass123!',
+        password=os.environ.get("MYSQL_ROOT_PASSWORD", ""),
         host='127.0.0.1',
         unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock',
         database='imperial_nexus'

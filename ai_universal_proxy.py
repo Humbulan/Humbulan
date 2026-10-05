@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import json, re, subprocess, requests, pymysql
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from bs4 import BeautifulSoup
@@ -6,7 +7,7 @@ from googlesearch import search as gsearch
 
 DB_CONFIG = {
     'user': 'root',
-    'password': 'RootStrongPass123!',
+    'password': os.environ.get("MYSQL_ROOT_PASSWORD", ""),
     'unix_socket': '/data/data/com.termux/files/home/mysql_run/mysql.sock',
     'database': 'imperial_nexus',
 }

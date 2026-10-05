@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import http.server
 import socketserver
 import pymysql
@@ -6,7 +7,7 @@ from urllib.parse import urlparse, parse_qs
 
 DB_SOCKET = "/data/data/com.termux/files/home/mysql_run/mysql.sock"
 DB_USER = "root"
-DB_PASS = "RootStrongPass123!"
+DB_PASS = os.environ.get("MYSQL_ROOT_PASSWORD", "")
 DB_NAME = "imperial_nexus"
 
 def get_recent_vulns(limit=20):
