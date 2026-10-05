@@ -98,7 +98,6 @@ push-grafana-dashboard.sh
 verify_system.sh
 update_incident_db.sh
 incident_desc_generator.py
-fetch_commodities.py
 llm_summarise.py
 wb_probe.py
 your_service_*.py

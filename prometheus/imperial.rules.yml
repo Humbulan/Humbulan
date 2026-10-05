@@ -10,7 +10,7 @@ groups:
           /
           sum(rate(sadc_payment_gateway_requests_total[5m]))
       - alert: ImperialInfrastructureDegraded
-        expr: count(up == 0) > 3
+        expr: count(up == 0) > 2
         for: 2m
         labels:
           severity: critical
@@ -25,3 +25,73 @@ groups:
         annotations:
           summary: "Cloudflare Analytics Restricted"
           description: "Zone analytics unavailable due to Free Tier plan."
+      - alert: NodeREDFlowCountZero
+        expr: node_red_flow_count == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node-RED has no flows"
+          description: "Flow count is 0 for more than 2 minutes."
+      - alert: NodeREDNodeCountLow
+        expr: node_red_node_count < 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node-RED node count is low"
+          description: "Current node count: {{ $value }}."
+      - alert: NodeREDExporterDown
+        expr: up{job="node_red_exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node-RED exporter is down"
+          description: "Prometheus cannot scrape Node-RED metrics."
+      - alert: LogisticsDisruptionDueToIncidents
+        expr: |
+          community_incidents_last_severity > 2 and (port_status == 0 or port_beira_capacity < 15)
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Logistics disruption correlated with community incidents"
+          description: "Incident severity is {{ $value }} and port/throughput is affected. Check community feed."
+      - alert: HighCommunityIncidentActivity
+        expr: |
+          community_incidents_last_severity > 2 and community_incidents_total > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High community incident activity"
+          description: "Current severity: {{ $value }}"
+
+
+      - alert: FleetVehicleDown
+        expr: fleet_maintenance > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple fleet vehicles in maintenance"
+          description: "{{ $value }} vehicles are in maintenance."
+
+      - alert: LogisticsDelay
+        expr: sadc_total_volume > 0 and sadc_total_volume < 100000000
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SADC trade volume dropped below R100M"
+          description: "Current volume: R{{ $value }}."
+
+      - alert: GoldPriceDrop
+        expr: gold_price_zar > 0 and gold_price_zar < 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Gold price dropped below R2700/g"
+          description: "Current price: R{{ $value }}/g."
