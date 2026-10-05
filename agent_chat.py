@@ -10,6 +10,29 @@ MAIN_PY   = os.path.join(AGENT_DIR, "app/main.py")
 
 app = Flask(__name__)
 
+AGENT_USER = os.environ.get("AGENT_USER", "humbu")
+AGENT_PASS = os.environ.get("AGENT_PASS", "ImperialNexus2026!")
+
+@app.before_request
+def _require_auth():
+    if request.path == "/health":
+        return None
+    auth = request.authorization
+    if not auth or auth.username != AGENT_USER or auth.password != AGENT_PASS:
+        return (
+            "<html><body style='background:#0a0f18;color:#f0a838;font-family:sans-serif;text-align:center;padding:60px'>"
+            "<h2>\U0001F512 Imperial Nexus — Authentication Required</h2>"
+            "<p style='color:#7d8a9f'>Enter your credentials to access the agent console.</p>"
+            "</body></html>",
+            401,
+            {"WWW-Authenticate": 'Basic realm="Imperial Nexus"'},
+        )
+
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+
 HTML = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
