@@ -17,14 +17,6 @@ groups:
         annotations:
           summary: "Imperial Infrastructure degradation detected"
           description: "More than 3 ports are currently offline (Current: {{ $value }})."
-      - alert: CloudflareFreeTierRestriction
-        expr: cloudflare_zones_skipped_free_tier > 0
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Cloudflare Analytics Restricted"
-          description: "Zone analytics unavailable due to Free Tier plan."
       - alert: NodeREDFlowCountZero
         expr: node_red_flow_count == 0
         for: 2m
@@ -95,7 +87,6 @@ groups:
         annotations:
           summary: "Gold dropped below $2000/oz (current: {{ $value }})"
           description: "USD gold price fell below $2000/oz. Check commodity feed and market conditions."
-          description: "Current price: R{{ $value }}/g."
       - alert: CommodityFeedStale
         expr: (time() - max(timestamp(sadc_commodity_price))) > 3600
         for: 5m
