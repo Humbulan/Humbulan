@@ -120,3 +120,4 @@ fastapi-mobile-app/app/static/manifest.json
 fastapi-mobile-app/public/manifest.json
 ~
 grafana-v11.2.0
+omega_launch.lock
