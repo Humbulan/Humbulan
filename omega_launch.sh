@@ -151,6 +151,22 @@ reload_prometheus() {
 reload_prometheus
 
 
+# FreeLLMAPI (3006)
+if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/3006") 2>/dev/null; then
+    echo "⚡ Starting FreeLLMAPI (3006)..."
+    cd ~/imperial_network/freellmapi && nohup node server/dist/index.js >> ~/imperial_network/logs/freellmapi.log 2>&1 &
+    sleep 3
+fi
+check_port 3006
+
+# Vite Client (5173)
+if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/5173") 2>/dev/null; then
+    echo "⚡ Starting Vite Client (5173)..."
+    cd ~/imperial_network/freellmapi/client && nohup npm run dev -- --port 5173 --host >> ~/imperial_network/logs/vite.log 2>&1 &
+    sleep 4
+fi
+check_port 5173
+
 echo -e "\n${YELLOW}🔍 Verifying 70 ports...${NC}"
 ONLINE=0
 for port in 1880 1883 8000 8001 8080 8081 8082 8083 8085 8086 8087 8088 8090 8091 8092 8093 8094 8095 8096 8097 8098 8099 8100 8101 8102 8103 8104 8105 8106 8107 8108 8110 8111 8112 8113 8114 8115 8117 8118 8121 8122 8191 8880 8888 8889 8890 8119 9001 9002 9003 9090 11434 12345 18789 8002 8005 5001 5002 5003 5006 5007 5008 8885 65412 3306 9091 9102 8089 8084 3001; do
@@ -316,7 +332,7 @@ check_port 8090
 # Prometheus (9091)
 if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/9091") 2>/dev/null; then
     echo "⚡ Starting Prometheus..."
-    nohup ~/prometheus/prometheus --config.file=/data/data/com.termux/files/home/imperial_network/prometheus.yml --web.listen-address=0.0.0.0:9091 --web.enable-lifecycle > ~/prometheus.log 2>&1 &
+    nohup env GODEBUG=netdns=cgo ~/prometheus/prometheus --config.file=/data/data/com.termux/files/home/imperial_network/prometheus.yml --web.listen-address=0.0.0.0:9091 --web.enable-lifecycle > ~/prometheus.log 2>&1 &
     sleep 2
 fi
 check_port 9091
@@ -348,7 +364,7 @@ check_port 8084
 # Grafana (3001)
 if ! (timeout 0.5 bash -c "echo > /dev/tcp/localhost/3001") 2>/dev/null; then
     echo "⚡ Starting Grafana..."
-    cd ~/imperial_network/grafana-v11.2.0 && GF_SERVER_HTTP_ADDR=0.0.0.0 GF_SERVER_HTTP_PORT=3001 nohup ./bin/grafana server > ~/grafana.log 2>&1 &
+    nohup env GF_SERVER_HTTP_ADDR=0.0.0.0 GF_SERVER_HTTP_PORT=3001 grafana server --homepath=/data/data/com.termux/files/usr/share/grafana > ~/grafana.log 2>&1 &
     sleep 3
 fi
 
