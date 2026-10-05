@@ -1,3 +1,4 @@
+#!/bin/bash
 # Prevent duplicate runs
 LOCKFILE="$HOME/imperial_network/omega_launch.lock"
 if [ -f "$LOCKFILE" ] && kill -0 $(cat "$LOCKFILE") 2>/dev/null; then
@@ -7,7 +8,6 @@ fi
 echo $$ > "$LOCKFILE"
 trap "rm -f $LOCKFILE" EXIT
 
-#!/bin/bash
 # IMPERIAL OMEGA LAUNCH - CEO ONLY
 # Version: 8.0 | 62/61 Ports with MariaDB Active
 
