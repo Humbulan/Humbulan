@@ -17,6 +17,8 @@ if [ "$ONLINE" -lt "$THRESHOLD" ]; then
     echo "[$TS] ALERT: $ONLINE services online (< $THRESHOLD) — firing omega_launch" >> "$LOG"
     rm -f "$HOME/imperial_network/omega_launch.lock"
     nohup bash "$HOME/imperial_network/omega_launch.sh" >> "$HOME/imperial_network/logs/boot.log" 2>&1 &
+    sleep 30
+    nohup bash "$HOME/.termux/boot/backup_archive/start_imperial_ubuntu.sh" >> "$HOME/imperial_network/logs/boot.log" 2>&1 &
 else
     # Log heartbeat once an hour instead of every 5 min
     if [ "$(date +%M)" -lt 5 ]; then
