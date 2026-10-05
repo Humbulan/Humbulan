@@ -88,12 +88,13 @@ groups:
           description: "Corridor volume is anomalously low — check Beira port status and payment gateway."
 
       - alert: GoldPriceDrop
-        expr: gold_price_zar > 0 and gold_price_zar < 1
+        expr: sadc_commodity_price{commodity="gold",currency="USD"} > 0 and sadc_commodity_price{commodity="gold",currency="USD"} < 2000
         for: 5m
         labels:
           severity: warning
         annotations:
-          summary: "Gold price dropped below R2700/g"
+          summary: "Gold dropped below $2000/oz (current: {{ $value }})"
+          description: "USD gold price fell below $2000/oz. Check commodity feed and market conditions."
           description: "Current price: R{{ $value }}/g."
       - alert: CommodityFeedStale
         expr: (time() - max(timestamp(sadc_commodity_price))) > 3600
