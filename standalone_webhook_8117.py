@@ -24,6 +24,15 @@ def refresh_cloudflare_metrics():
     global cf_cache
     try:
         pwd = os.environ.get("MYSQL_ROOT_PASSWORD", "")
+        if not pwd:
+            try:
+                with open(os.path.expanduser("~/.bashrc")) as f:
+                    for line in f:
+                        if "MYSQL_ROOT_PASSWORD" in line and line.startswith("export"):
+                            pwd = line.split("=", 1)[1].strip().strip('"').strip("'")
+                            break
+            except Exception:
+                pass
         sock = os.path.expanduser("~/mysql_run/mysql.sock")
         cmd = ["mariadb", "-u", "root", "-S", sock]
         if pwd:
