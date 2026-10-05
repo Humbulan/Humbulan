@@ -7,6 +7,20 @@ from datetime import datetime, timedelta
 import os
 import io
 import random
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 app = Flask(__name__)
 
@@ -32,7 +46,7 @@ def co_route(): return render_template('create_order.html', user=type('User', ()
 def ns_route(): return render_template('notification_settings.html', user=type('User', (), {'username': 'Humbulani'}))
 
 app.config['SECRET_KEY'] = 'imperial_secret_123'
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{os.environ.get('MYSQL_ROOT_PASSWORD', '')}@localhost/imperial_nexus?unix_socket=/data/data/com.termux/files/home/mysql_run/mysql.sock"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://root:{_mysql_password()}@localhost/imperial_nexus?unix_socket=/data/data/com.termux/files/home/mysql_run/mysql.sock"
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'

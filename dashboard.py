@@ -4,6 +4,20 @@ import pymysql
 from flask import Flask, render_template_string
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -21,7 +35,7 @@ def verify_password(username, password):
 # DB config
 DB_CONFIG = {
     'user': 'root',
-    'password': os.environ.get("MYSQL_ROOT_PASSWORD", ""),
+    'password': _mysql_password(),
     'unix_socket': '/data/data/com.termux/files/home/mysql_run/mysql.sock',
     'database': 'imperial_nexus'
 }

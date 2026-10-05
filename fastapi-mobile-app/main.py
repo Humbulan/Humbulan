@@ -7,7 +7,7 @@ def get_db_connection():
 
         user="root",
 
-        password=os.environ.get("MYSQL_ROOT_PASSWORD", ""),
+        password=_mysql_password(),
 
         unix_socket="/data/data/com.termux/files/home/mysql_run/mysql.sock",
 
@@ -29,7 +29,7 @@ def mysql_query(sql):
     cmd = [
         "mariadb",
         "-u", "root",
-        "-p" + os.environ.get("MYSQL_ROOT_PASSWORD", ""),
+        "-p" + _mysql_password(),
         "-S", "/data/data/com.termux/files/home/mysql_run/mysql.sock",
         "imperial_nexus",
         "-e", sql
@@ -75,6 +75,20 @@ async def root():
 
 # === Auth helpers for portal ===
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 security = HTTPBasic()
 
 def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):

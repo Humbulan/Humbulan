@@ -1,8 +1,22 @@
 import os
 import sys, json, subprocess, datetime
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 def run_mysql(query):
-    cmd = ['mariadb', '-u', 'root', '-p' + os.environ.get("MYSQL_ROOT_PASSWORD", ""), '-S', '/data/data/com.termux/files/home/mysql_run/mysql.sock', '-e', query]
+    cmd = ['mariadb', '-u', 'root', '-p' + _mysql_password(), '-S', '/data/data/com.termux/files/home/mysql_run/mysql.sock', '-e', query]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0: return None
     lines = result.stdout.strip().split('\n')

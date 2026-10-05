@@ -11,6 +11,20 @@ import urllib.request
 import subprocess
 import threading
 import time
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 # Global cache for Cloudflare metrics
 cf_cache = {
@@ -23,7 +37,7 @@ def refresh_cloudflare_metrics():
     """Read Cloudflare metrics from MariaDB (no external URL)."""
     global cf_cache
     try:
-        pwd = os.environ.get("MYSQL_ROOT_PASSWORD", "")
+        pwd = _mysql_password()
         if not pwd:
             try:
                 with open(os.path.expanduser("~/.bashrc")) as f:

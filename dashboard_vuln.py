@@ -4,10 +4,24 @@ import http.server
 import socketserver
 import pymysql
 from urllib.parse import urlparse, parse_qs
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 DB_SOCKET = "/data/data/com.termux/files/home/mysql_run/mysql.sock"
 DB_USER = "root"
-DB_PASS = os.environ.get("MYSQL_ROOT_PASSWORD", "")
+DB_PASS = _mysql_password()
 DB_NAME = "imperial_nexus"
 
 def get_recent_vulns(limit=20):

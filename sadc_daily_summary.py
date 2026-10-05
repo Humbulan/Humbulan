@@ -2,11 +2,25 @@
 import os
 import mysql.connector
 from datetime import datetime, timedelta
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 def summarize():
     conn = mysql.connector.connect(
         user='root',
-        password=os.environ.get("MYSQL_ROOT_PASSWORD", ""),
+        password=_mysql_password(),
         host='127.0.0.1',
         unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock',
         database='imperial_nexus'

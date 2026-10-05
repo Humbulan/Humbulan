@@ -1,3 +1,18 @@
+import os as _os
+
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 import os
 from flask import Flask
 import mysql.connector
@@ -11,7 +26,7 @@ DATA = {"status": "Sovereign Shield Active", "valuation": "R269.9B", "integrity"
 
 def get_cf_status():
     try:
-        conn = mysql.connector.connect(user='root', password=os.environ.get("MYSQL_ROOT_PASSWORD", ""), unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock', database='imperial_nexus')
+        conn = mysql.connector.connect(user='root', password=_mysql_password(), unix_socket='/data/data/com.termux/files/home/mysql_run/mysql.sock', database='imperial_nexus')
         cursor = conn.cursor()
         cursor.execute("SELECT value FROM cloudflare_metrics ORDER BY timestamp DESC LIMIT 1")
         val = cursor.fetchone()

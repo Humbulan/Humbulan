@@ -4,6 +4,20 @@ import subprocess
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 LOG_FILE = "/data/data/com.termux/files/home/imperial_network/logs/malamulele.log"
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
@@ -11,7 +25,7 @@ os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 DB_CMD = [
     "mariadb",
     "-u", "root",
-    "-p" + os.environ.get("MYSQL_ROOT_PASSWORD", ""),
+    "-p" + _mysql_password(),
     "-S", "/data/data/com.termux/files/home/mysql_run/mysql.sock",
     "-D", "imperial_nexus",
     "-N",

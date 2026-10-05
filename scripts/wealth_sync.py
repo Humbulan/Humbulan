@@ -11,6 +11,20 @@ import requests
 
 sys.path.insert(0, os.path.expanduser("~/imperial_network/scripts"))
 from metal_client import get_metal_prices
+import os as _os
+def _mysql_password():
+    pwd = _os.environ.get("MYSQL_ROOT_PASSWORD", "")
+    if pwd:
+        return pwd
+    try:
+        with open(_os.path.expanduser("~/.my.cnf")) as f:
+            for line in f:
+                if line.startswith("password="):
+                    return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
 
 DB = "imperial_nexus"
 USD_ZAR_FALLBACK = 18.50
