@@ -18,7 +18,7 @@ groups:
           summary: "Imperial Infrastructure degradation detected"
           description: "More than 3 ports are currently offline (Current: {{ $value }})."
       - alert: CloudflareFreeTierRestriction
-        expr: cloudflare_zones_filtered > 0
+        expr: cloudflare_zones_skipped_free_tier > 0
         for: 5m
         labels:
           severity: warning

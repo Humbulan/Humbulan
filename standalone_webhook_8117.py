@@ -5,8 +5,10 @@ Now also proxies Cloudflare metrics with caching.
 """
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import datetime
+import os
 import json
 import urllib.request
+import subprocess
 import threading
 import time
 
@@ -18,19 +20,55 @@ cf_cache = {
 }
 
 def refresh_cloudflare_metrics():
-    """Fetch Cloudflare metrics and update cache."""
+    """Read Cloudflare metrics from MariaDB (no external URL)."""
     global cf_cache
-    req = urllib.request.Request(
-        "https://humbu.store/metrics",
-        headers={"User-Agent": "curl/8.0.0"}
-    )
     try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            cf_cache['data'] = resp.read().decode()
-            cf_cache['timestamp'] = time.time()
+        pwd = os.environ.get("MYSQL_ROOT_PASSWORD", "")
+        sock = os.path.expanduser("~/mysql_run/mysql.sock")
+        cmd = [
+            "mariadb", "-u", "root", "-p" + pwd,
+            "-S", sock, "imperial_nexus", "-N", "-s", "-e",
+            "SELECT metric, value, labels FROM cloudflare_metrics "
+            "WHERE timestamp > DATE_SUB(NOW(), INTERVAL 24 HOUR) "
+            "ORDER BY timestamp DESC",
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        if res.returncode != 0:
+            cf_cache["data"] = "# ERROR reading DB: %s\n" % res.stderr.strip()
+            cf_cache["timestamp"] = time.time()
+            return
+
+        lines = []
+        seen = set()
+        for row in res.stdout.strip().split("\n"):
+            if not row.strip():
+                continue
+            parts = row.split("\t")
+            if len(parts) < 3:
+                continue
+            metric, value, labels_json = parts[0], parts[1], parts[2]
+            key = (metric, labels_json)
+            if key in seen:
+                continue
+            seen.add(key)
+            try:
+                labels = json.loads(labels_json) if labels_json and labels_json != "NULL" else {}
+            except Exception:
+                labels = {}
+            label_str = ",".join('%s="%s"' % (k, v) for k, v in labels.items())
+            if label_str:
+                lines.append("%s{%s} %s" % (metric, label_str, value))
+            else:
+                lines.append("%s %s" % (metric, value))
+
+        if not lines:
+            cf_cache["data"] = "# no recent cloudflare metrics in DB\n"
+        else:
+            cf_cache["data"] = "\n".join(lines) + "\n"
+        cf_cache["timestamp"] = time.time()
     except Exception as e:
-        cf_cache['data'] = f'# ERROR fetching Cloudflare metrics: {str(e)}\n'
-        cf_cache['timestamp'] = time.time()
+        cf_cache["data"] = "# ERROR: %s\n" % e
+        cf_cache["timestamp"] = time.time()
 
 # Run the refresh in a background thread
 def background_refresh():
