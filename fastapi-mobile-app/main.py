@@ -937,3 +937,36 @@ def cleanup_downloads():
     threading.Timer(3600, cleanup_downloads).start()
 cleanup_downloads()
 rate_store = defaultdict(list)
+
+# --- Community Safety Feed (restored) ---
+import pymysql
+
+@app.get("/community-safety-feed")
+async def community_safety_feed():
+    try:
+        conn = pymysql.connect(
+            unix_socket="/data/data/com.termux/files/home/mysql_run/mysql.sock",
+            user="root",
+            password=_mysql_password(),
+            database="imperial_nexus",
+            autocommit=True
+        )
+        cur = conn.cursor()
+        cur.execute("SELECT id, incident_type, location_id, severity_level, is_verified, action_taken, created_at FROM community_incidents ORDER BY created_at DESC")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        incidents = []
+        for row in rows:
+            incidents.append({
+                "id": str(row[0]),
+                "incident_type": row[1],
+                "location_id": str(row[2]) if row[2] else None,
+                "severity_level": str(row[3]),
+                "is_verified": str(row[4]) if row[4] is not None else "0",
+                "action_taken": row[5],
+                "created_at": row[6].strftime("%Y-%m-%d %H:%M:%S") if row[6] else None
+            })
+        return {"incidents": incidents}
+    except Exception as e:
+        return {"incidents": [], "error": str(e)}

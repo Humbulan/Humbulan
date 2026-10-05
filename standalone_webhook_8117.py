@@ -104,6 +104,31 @@ def background_refresh():
 thread = threading.Thread(target=background_refresh, daemon=True)
 thread.start()
 
+
+def _read_community_incidents():
+    """Return Prometheus lines for community incident metrics."""
+    lines = []
+    try:
+        pwd = _get_mysql_password() if "_get_mysql_password" in dir() else ""
+        sock = os.path.expanduser("~/mysql_run/mysql.sock")
+        cmd = ["mariadb", "-u", "root", "-S", sock]
+        if pwd:
+            cmd.append("-p" + pwd)
+        cmd.extend(["imperial_nexus", "-N", "-s", "-e",
+            "SELECT COUNT(*), IFNULL(SUM(severity_level),0), "
+            "IFNULL((SELECT severity_level FROM community_incidents ORDER BY created_at DESC LIMIT 1),0) "
+            "FROM community_incidents"])
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        if r.returncode == 0 and r.stdout.strip():
+            parts = r.stdout.strip().split("\t")
+            if len(parts) == 3:
+                lines.append("community_incidents_total %s" % parts[0])
+                lines.append("community_incidents_severity_sum %s" % parts[1])
+                lines.append("community_incidents_last_severity %s" % parts[2])
+    except Exception:
+        pass
+    return lines
+
 class WebhookHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
@@ -159,6 +184,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
             # Append cached Cloudflare metrics
             metrics += cf_cache['data']
+            for _line in _read_community_incidents():
+                metrics += _line + '\n'
 
             self.wfile.write(metrics.encode())
             self.log_to_file('GET', self.path)
