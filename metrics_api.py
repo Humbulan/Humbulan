@@ -81,6 +81,19 @@ class MetricsHandler(BaseHTTPRequestHandler):
                 for service, latency in rows:
                     if latency is not None:
                         lines.append(f'response_time_seconds{{service="{service}"}} {latency}')
+
+                # --- NEW: include imperial_metrics (ops_/biz_ values) ---
+                cursor.execute("""
+                    SELECT m.metric_name, m.metric_value
+                    FROM imperial_metrics m
+                    INNER JOIN (
+                        SELECT metric_name, MAX(recorded_at) AS latest
+                        FROM imperial_metrics GROUP BY metric_name
+                    ) l ON m.metric_name = l.metric_name AND m.recorded_at = l.latest
+                """)
+                for name, value in cursor.fetchall():
+                    if name.startswith('ops_') or name.startswith('biz_'):
+                        lines.append(f'{name} {value}')
                 conn.close()
 
                 self.send_response(200)
