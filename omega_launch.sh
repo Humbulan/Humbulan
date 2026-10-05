@@ -371,24 +371,25 @@ fi
 # ==========================================
 echo -e "\n${YELLOW}🌐 Synchronizing Cloudflare Metrics to Imperial Nexus...${NC}"
 
+# DISABLED 2026-10-05: circular loop. This fetched cloudflare_zone_requests_total from the local webhook (which reads the DB), then wrote that same value back to the DB. Every launch inserted a fake 0.00 row. Re-enable only when CURRENT_REQ comes from the real Cloudflare API.
 # Capture metric using set
-set -- $(curl -s http://localhost:8117/metrics | grep "cloudflare_zone_requests_total" | awk '{print $2}')
-CURRENT_REQ=${1:-0}
-
-# Insert into MariaDB using the established socket path
-mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" imperial_nexus <<SQL
-INSERT INTO cloudflare_metrics (metric, value, labels, timestamp)
-VALUES (
-    'cloudflare_zone_requests_total', 
-    $CURRENT_REQ, 
-    '{"source": "SADC_Corridor_Logistics", "node": "Thohoyandou_Edge"}', 
-    NOW()
-);
-SQL
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✅ Cloudflare metrics ingestion successful.${NC}"
-else
-    echo -e "${RED}❌ Cloudflare metrics ingestion failed.${NC}"
-fi
+# set -- $(curl -s http://localhost:8117/metrics | grep "cloudflare_zone_requests_total" | awk '{print $2}')
+# CURRENT_REQ=${1:-0}
+# 
+# # Insert into MariaDB using the established socket path
+# mariadb -u root -p"${MYSQL_ROOT_PASSWORD}" -S "$MYSQL_SOCKET" imperial_nexus <<SQL
+# INSERT INTO cloudflare_metrics (metric, value, labels, timestamp)
+# VALUES (
+#     'cloudflare_zone_requests_total', 
+#     $CURRENT_REQ, 
+#     '{"source": "SADC_Corridor_Logistics", "node": "Thohoyandou_Edge"}', 
+#     NOW()
+# );
+# SQL
+# 
+# if [ $? -eq 0 ]; then
+#     echo -e "${GREEN}✅ Cloudflare metrics ingestion successful.${NC}"
+# else
+#     echo -e "${RED}❌ Cloudflare metrics ingestion failed.${NC}"
+# fi
 
